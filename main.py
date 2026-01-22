@@ -1,13 +1,24 @@
+import argparse
 from monitor.checker import check_api_health
 
-
 def main():
-    url = "https://httpbin.org/status/200"
-    result = check_api_health(url)
+    parser = argparse.ArgumentParser(description = "API Health Monitor")
+    parser.add_argument("url", help = "API endpoint to check")
+    parser.add_argument("--retries", type=int, default = 3, help = "Number of retry attempts")
+    parser.add_argument("--timeout", type=int, default = 5, help = "Request timeout in seconds")
     
-    print("\n=== API HEALTH CHECK ===")
-    for key, value in result.items():
-        print(f"{key}: {value}")
+    args = parser.parse_args()
+    
+    healthy = check_api_health(
+        args.url,
+        retries = args.retries,
+        timeout = args.timeout
+    )
+    
+    if healthy:
+        print("API is HEALTHY")
+    else:
+        print("API is NOT HEALTHY")
 
 
 if __name__ == "__main__":
